@@ -7,9 +7,11 @@ use App\Models\Employee;
 use App\Models\Position;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
 use Livewire\WithFileUploads;
+use Image;
 
 class AddEmployeeComponent extends Component
 {
@@ -58,7 +60,7 @@ class AddEmployeeComponent extends Component
 
         $this->validateOnly($field,[
             "fullname"=>"required|min:$this->minLength|max:$this->maxLength",
-            "photo"=>"required|file|mimes:jpg,png|max:5000",
+            "photo"=>"required|file|mimes:jpg,png|max:5000|dimensions:min_width=300,min_height=200",
             "phone"=>["required",Rule::phone()->detect()->country('UA')],
             "email"=>"required|email",
             "salary"=>"required|numeric|between:0,500000",
@@ -72,7 +74,7 @@ class AddEmployeeComponent extends Component
 
     }
 
-    public function addEmployee(){
+    public function addEmployee(\Illuminate\Http\Request $request){
 
         $allHeads = Employee::all("fullname");
         $allPositions = Position::all("name");
@@ -95,21 +97,24 @@ class AddEmployeeComponent extends Component
 
         $this->validate([
             "fullname"=>"required|min:$this->minLength|max:$this->maxLength",
-            "photo"=>"required|file|mimes:jpg,png|max:5000",
+            "photo"=>"required|file|mimes:jpg,png|max:5000|dimensions:min_width=300,min_height=200",
             "phone"=>["required",Rule::phone()->detect()->country('UA')],
             "email"=>"required|email",
             "salary"=>"required|numeric|between:0,500000",
             "position"=>["required", Rule::in($allPositions)],
             "head"=>["required",Rule::in($allHeads)],
             "dateOfEmployment"=>"required|date"
-            //"phone"=>"required|phone|regex:/\^\+?3?8?(0[\s\.-]\d{2}[\s\.-]\d{3}[\s\.-]\d{2}[\s\.-]\d{2})$/"
+
         ]);
 
         $employee = new Employee();
         $employee->fullname = $this->fullname;
-        $imageName = Carbon::now()->timestamp . ".{$this->photo->extension()}";
-        $this->photo->storeAs("images",$imageName);
-        $employee->photo = $imageName;
+        $newImage = Image::make($this->photo->getRealPath(),80);
+        $newImage->encode("jpg")->resize(300,300)->fit(300,300);
+        $thumbnail_image_name = pathinfo($this->photo->getClientOriginalName(), PATHINFO_FILENAME);
+        $newImage->save(public_path("/images/") . $thumbnail_image_name . ".jpg","80","jpg");
+        $filename = $thumbnail_image_name . ".jpg";
+        $employee->photo = $filename;
         $employee->phone = $this->phone;
         $employee->email = $this->email;
         $employee->salary = $this->salary;
@@ -122,6 +127,8 @@ class AddEmployeeComponent extends Component
 
         return redirect()->route("employees");
     }
+
+
 
     public function render()
     {

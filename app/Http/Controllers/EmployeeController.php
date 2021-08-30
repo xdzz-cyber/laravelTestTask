@@ -20,7 +20,7 @@ class EmployeeController extends Controller
                 return $actionBtn;
             })->addIndexColumn()->addColumn("photo",function ($row){
                 $src = url("/images") . "/" . $row['photo'];
-                $photo = "<img style='border-radius: 50%' width='50' height='50' src='$src' alt='single employee photo'/>";
+                $photo = "<img style='border-radius: 50%' width='75' height='75' src='$src' alt='single employee photo'/>";
                 return $photo;
             })->rawColumns(['management','photo'])->make(true);
         }

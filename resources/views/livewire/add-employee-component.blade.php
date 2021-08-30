@@ -3,10 +3,7 @@
     <form class="p-5" wire:submit.prevent="addEmployee" enctype="multipart/form-data">
         <div class="mb-3">
             <label for="photo" class="form-label">Photo</label>
-            <input type="file" wire:model="photo">
-            @if($photo)
-                <img src="{{$photo->temporaryUrl()}}" alt="user chosen image" width="300" height="300">
-            @endif
+            <input type="file" wire:model="photo" name="photo">
             @error("photo")
             <p class="text-danger">{{$message}}</p>
             @enderror
