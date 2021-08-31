@@ -16,11 +16,11 @@ class Position extends Model
 
     public function getCreatedAtAttribute($value)
     {
-        return Carbon::parse($value)->format("m-d-Y");
+        return Carbon::parse($value)->format("d-m-Y");
     }
 
     public function getUpdatedAtAttribute($value)
     {
-        return Carbon::parse($value)->format("m-d-Y");
+        return Carbon::parse($value)->format("d-m-Y");
     }
 }

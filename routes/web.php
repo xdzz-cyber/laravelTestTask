@@ -26,6 +26,8 @@ Route::get("/admin/getEmployees", [EmployeeController::class,"getEmployees"])->n
 
 Route::get("/admin/employees/add",[EmployeeController::class,"addEmployeePage"])->name("employees.add");
 
+Route::get("/admin/employees/edit/{employee_id}",[EmployeeController::class,"editEmployeePage"])->name("employees.edit");
+
 Route::get("/admin/positions", [PositionController::class,"index"])->name("positions");
 
 Route::get("/admin/getPositions", [PositionController::class,"getPositions"])->name("getPositions");

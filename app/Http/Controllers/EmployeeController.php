@@ -29,4 +29,8 @@ class EmployeeController extends Controller
     public function addEmployeePage(){
         return view("addEmployeePage");
     }
+
+    public function editEmployeePage($employee_id){
+        return view("editEmployeePage",["employee_id"=>$employee_id]);
+    }
 }
