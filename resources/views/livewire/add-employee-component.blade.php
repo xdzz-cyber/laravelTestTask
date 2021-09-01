@@ -7,7 +7,7 @@
             @error("photo")
             <p class="text-danger">{{$message}}</p>
             @enderror
-            <div id="photo2" class="form-text">File foramt jpg,png, the minimum size is 300x300</div>
+            <div id="photo2" class="form-text">File format jpg,png, the minimum size is 300x300</div>
         </div>
         <div class="mb-3">
             <label for="fullname" class="form-label">Employee fullname</label>
@@ -34,7 +34,12 @@
         </div>
         <div class="mb-3">
             <label for="position" class="form-label">Position</label>
-            <input type="text" class="form-control" id="position" aria-describedby="position" wire:model="position">
+            <select class="form-select" wire:model="position">
+                <option selected>Choose position that you want</option>
+                @foreach($allPositions as $position)
+                    <option value="{{$position->id}}">{{$position->name}}</option>
+                @endforeach
+            </select>
             @error("position")
             <p class="text-danger">{{$message}}</p>
             @enderror
@@ -61,7 +66,7 @@
             @enderror
         </div>
         <div class="mt-5">
-            <a href="{{route('positions')}}" class="btn btn-danger mx-1">Cancel</a>
+            <a href="{{route('employees')}}" class="btn btn-danger mx-1">Cancel</a>
             <button type="submit" class="btn btn-primary mx-1">Save</button>
         </div>
 

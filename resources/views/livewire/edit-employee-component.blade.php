@@ -7,7 +7,7 @@
             </div>
             <div class="mb-5">
                 @if($photo)
-                    <img src="{{$photo->temporaryUrl()}}" alt="tempPhoto">
+                    <img width="300px" height="300px" src="{{$photo->temporaryUrl()}}" alt="tempPhoto">
                 @else
                     <img width="300px" height="300px" src="{{url("/images/$oldPhoto")}}" alt="oldPhoto">
                 @endif
@@ -44,7 +44,12 @@
         </div>
         <div class="mb-3">
             <label for="position" class="form-label">Position</label>
-            <input type="text" class="form-control" id="position" aria-describedby="position" wire:model="position">
+            <select class="form-select" wire:model="position">
+                <option selected>Choose position that you want</option>
+                @foreach($allPositions as $position)
+                    <option value="{{$position->id}}">{{$position->name}}</option>
+                @endforeach
+            </select>
             @error("position")
             <p class="text-danger">{{$message}}</p>
             @enderror
@@ -63,12 +68,9 @@
                         <input type="text" class="form-control" id="head" aria-describedby="head" wire:model="head" wire:keydown.enter="selectHeadAndSetIt"   wire:keydown.escape="resetValues"
                                wire:keydown.tab="resetValues" wire:keydown.arrow-up="decrementHighlightIndex" wire:keydown.arrow-down="incrementHighlightIndex">
 
-
-
-
                 <div wire:loading wire:target="head">Searching....</div>
                 <div class="position-absolute list-group bg-white w-100 shadow-lg" style="z-index: 10">
-                        @if($searchedEmployeeHead && $head)
+                        @if($searchedEmployeeHead && $head && !$headIsAlreadyCorrect)
                             @foreach($searchedEmployeeHead as $i => $item)
                                 <a class="list-group-item {{$highlightIndex == $i ? 'text-bold' : ''}}" href="#">{{$item['fullname']}}</a>
                             @endforeach
@@ -109,9 +111,8 @@
         </div>
 
         <div class="mt-5">
-            <a href="{{route('positions')}}" class="btn btn-danger mx-1">Cancel</a>
+            <a href="{{route('employees')}}" class="btn btn-danger mx-1">Cancel</a>
             <button type="submit" class="btn btn-primary mx-1" >Edit</button>
-{{--            wire:click.prevent="editEmployee"--}}
         </div>
 
     </form>

@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\PositionController;
@@ -16,16 +17,13 @@ use App\Http\Controllers\PositionController;
 |
 */
 
+Auth::routes();
+
 Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/logout', [App\Http\Controllers\Auth\LoginController::class, 'logout'])->name('logout');
-
-Auth::routes();
-
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-
 
 Route::group(["middleware"=>["auth"]], function(){
     Route::get("/admin/getEmployees", [EmployeeController::class,"getEmployees"])->name('getEmployees');

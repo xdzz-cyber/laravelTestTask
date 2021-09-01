@@ -30,11 +30,14 @@ class AddEmployeeComponent extends Component
     public $head;
     public $dateOfEmployment;
 
+    public $allPositions;
+
 
     public function mount(){
         $this->minLength = 2;
         $this->maxLength = 256;
         $this->currentNameLengthCounter = 0;
+        $this->allPositions = Position::all();
     }
 
     public function getParsedHeads(){
@@ -75,7 +78,7 @@ class AddEmployeeComponent extends Component
             "phone"=>["required",Rule::phone()->detect()->country('UA')],
             "email"=>"required|email",
             "salary"=>"required|numeric|between:0,500000",
-            "position"=>["required", Rule::in($allPositions)],
+            "position"=>["required"],
             "head"=>["required",function ($attribute, $value, $fail) use ($allHeads) {
 
                 if (!in_array($value, $allHeads) || EmployeeController::getHeadHierarchyLevel(Employee::where("fullname",$this->head)->first()->id) > 5){
@@ -104,7 +107,7 @@ class AddEmployeeComponent extends Component
             "phone"=>["required",Rule::phone()->detect()->country('UA')],
             "email"=>"required|email",
             "salary"=>"required|numeric|between:0,500000",
-            "position"=>["required", Rule::in($allPositions)],
+            "position"=>["required"],
             "head"=>["required",function ($attribute, $value, $fail) use ($allHeads) {
                 // your logic
 

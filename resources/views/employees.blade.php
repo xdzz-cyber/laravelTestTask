@@ -3,8 +3,21 @@
 @section('title', 'Employees')
 
 @section('content_header')
-    <h1 class="d-inline-block">Employees</h1>
-    <a href="{{route('employees.add')}}" class="fa-pull-right d-inline-block text-white bg-gradient-gray btn btn-info">Add employee</a>
+
+    <div class="row">
+        <div class="col-md-6">
+            <h1 class="d-inline-block">Employees</h1>
+        </div>
+        <div class="col-md-6">
+            <a href="{{route('employees.add')}}" class="fa-pull-right d-inline-block text-white bg-gradient-gray btn btn-info mx-3">Add employee</a>
+            <form id="logout-form" action="{{ url('logout') }}" method="POST">
+                {{ csrf_field() }}
+                <button class="fa-pull-right d-inline-block text-white bg-gradient-gray btn btn-info" type="submit">Logout</button>
+            </form>
+        </div>
+    </div>
+
+
 @stop
 
 @section('plugins.Sweetalert2', true)

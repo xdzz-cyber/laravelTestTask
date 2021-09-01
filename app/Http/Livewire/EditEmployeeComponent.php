@@ -19,7 +19,7 @@ class EditEmployeeComponent extends Component
 {
     use WithFileUploads;
 
-    //public $employee_id;
+
     public $maxLength;
     public $minLength;
     public $currentNameLengthCounter;
@@ -40,11 +40,21 @@ class EditEmployeeComponent extends Component
 
     public $searchedEmployeeHead;
     public $highlightIndex;
+    public $headIsAlreadyCorrect;
+
+    public $allPositions;
 
     public function updatingHead(){
         $this->searchedEmployeeHead = Employee::where("fullname","like", "%{$this->head}%")->get()->toArray();
     }
+    public function updatedHead(){
+        $this->headIsAlreadyCorrect = $this->checkIfHeadIsAlreadyCorrect();
+    }
 
+    public function checkIfHeadIsAlreadyCorrect(){
+        $allHeads = $this->getParsedHeads();
+        return in_array($this->head, $allHeads);
+    }
 
     public function resetValues(){
         $this->searchedEmployeeHead = [];
@@ -80,6 +90,8 @@ class EditEmployeeComponent extends Component
 
     public function mount($employee_id){
         $this->resetValues();
+        $headIsAlreadyCorrect = false;
+        $this->allPositions = Position::all();
         $this->minLength = 2;
         $this->maxLength = 256;
         $this->currentNameLengthCounter = 0;
@@ -138,7 +150,7 @@ class EditEmployeeComponent extends Component
             "email"=>"required|email",
             "photo"=>$this->photo ? "required|file|mimes:jpg,png|max:5000|dimensions:min_width=300,min_height=200" : "",
             "salary"=>"required|numeric|between:0,500000",
-            "position"=>["required", Rule::in($allPositions)],
+            "position"=>["required"],
             "dateOfEmployment"=>"required|date"]);
 
         $this->currentNameLengthCounter = EmployeeController::getHeadHierarchyLevel($this->employee_id);
@@ -156,7 +168,7 @@ class EditEmployeeComponent extends Component
                 "email"=>"required|email",
                 "photo"=>$this->photo ? "required|file|mimes:jpg,png|max:5000|dimensions:min_width=300,min_height=200" : "",
                 "salary"=>"required|numeric|between:0,500000",
-                "position"=>["required", Rule::in($allPositions)],
+                "position"=>["required"],
                 "head"=>["required",function ($attribute, $value, $fail) use ($allHeads) {
                     // your logic
 

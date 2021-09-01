@@ -11,7 +11,7 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-12">
-                    @livewire("add-employee-component")
+                    @livewire("add-position-component")
                 </div>
             </div>
         </div>
