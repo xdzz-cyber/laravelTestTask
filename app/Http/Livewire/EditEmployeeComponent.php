@@ -118,13 +118,6 @@ class EditEmployeeComponent extends Component
             $allHeads[] = $tmpHeads[$i]  . $tmpHeads[$i+1];
         }
 
-        $allHeads = array_filter($allHeads, function ($val){
-           if (EmployeeController::getHeadHierarchyLevel(Employee::where("fullname",$val)->first()->id)){
-               return true;
-           }
-           return false;
-        });
-
         return $allHeads;
     }
 
@@ -157,7 +150,7 @@ class EditEmployeeComponent extends Component
     }
 
 
-    public function editEmployee(\Illuminate\Http\Request $request){
+    public function editEmployee(){
 
         $allHeads = $this->getParsedHeads();
         $allPositions = $this->getParsedPositions();

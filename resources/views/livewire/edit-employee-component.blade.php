@@ -45,9 +45,12 @@
         <div class="mb-3">
             <label for="position" class="form-label">Position</label>
             <select class="form-select" wire:model="position">
-                <option selected>Choose position that you want</option>
-                @foreach($allPositions as $position)
-                    <option value="{{$position->id}}">{{$position->name}}</option>
+                @foreach($allPositions as $positionElement)
+                    @if($position == $positionElement)
+                        <option selected value="{{$positionElement->id}}">{{$positionElement->name}}</option>
+                    @else
+                        <option value="{{$positionElement->id}}">{{$positionElement->name}}</option>
+                    @endif
                 @endforeach
             </select>
             @error("position")
