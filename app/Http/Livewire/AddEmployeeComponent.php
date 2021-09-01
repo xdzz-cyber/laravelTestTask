@@ -107,7 +107,11 @@ class AddEmployeeComponent extends Component
             "phone"=>["required",Rule::phone()->detect()->country('UA')],
             "email"=>"required|email",
             "salary"=>"required|numeric|between:0,500000",
-            "position"=>["required"],
+            "position"=>["required", function($attribute, $value, $fail){
+                if ($value == "default"){
+                    $fail("Please, choose correct position");
+                }
+            }],
             "head"=>["required",function ($attribute, $value, $fail) use ($allHeads) {
                 // your logic
 

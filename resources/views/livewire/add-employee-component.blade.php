@@ -35,7 +35,7 @@
         <div class="mb-3">
             <label for="position" class="form-label">Position</label>
             <select class="form-select" wire:model="position">
-                <option selected>Choose position that you want</option>
+                <option selected value="default">Choose position that you want</option>
                 @foreach($allPositions as $position)
                     <option value="{{$position->id}}">{{$position->name}}</option>
                 @endforeach
