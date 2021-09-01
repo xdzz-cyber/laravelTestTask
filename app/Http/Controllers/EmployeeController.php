@@ -6,8 +6,14 @@ use Illuminate\Http\Request;
 use App\DataTables\EmployeeDataTable;
 use DataTables;
 use App\Models\Employee;
+use App\Traits\HeadHierarchyLevel;
+
 class EmployeeController extends Controller
 {
+    use HeadHierarchyLevel;
+
+
+
     public function index(EmployeeDataTable $dataTable){
         return $dataTable->render("employees");
     }
@@ -32,5 +38,19 @@ class EmployeeController extends Controller
 
     public function editEmployeePage($employee_id){
         return view("editEmployeePage",["employee_id"=>$employee_id]);
+    }
+
+    public function changeHeadOnDelete($deleteElementId){
+        $willBeDeletedEmployee = Employee::find($deleteElementId);
+        $newBossId = $willBeDeletedEmployee->boss_id > 0 ? $willBeDeletedEmployee->boss_id : 0;
+        $employeesAboutToBeChanged = Employee::where("boss_id",$deleteElementId)->update(["boss_id"=>$newBossId]);
+    }
+
+    public function removeEmployee($employee_id){
+        $employee = Employee::find($employee_id);
+        $this->changeHeadOnDelete($employee_id);
+        unlink("images/{$employee->photo}");
+        $employee->delete();
+        return redirect()->route("employees");
     }
 }

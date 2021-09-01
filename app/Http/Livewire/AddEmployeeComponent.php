@@ -3,6 +3,7 @@
 namespace App\Http\Livewire;
 
 
+use App\Http\Controllers\EmployeeController;
 use App\Models\Employee;
 use App\Models\Position;
 use Carbon\Carbon;
@@ -31,22 +32,13 @@ class AddEmployeeComponent extends Component
 
 
     public function mount(){
-        $this->minLength = 0;
+        $this->minLength = 2;
         $this->maxLength = 256;
         $this->currentNameLengthCounter = 0;
     }
 
-    public function updated($field,$value){
-
+    public function getParsedHeads(){
         $allHeads = Employee::all("fullname");
-        $allPositions = Position::all("name");
-        $tmpPositions = "";
-        foreach ($allPositions as $position){
-            $tmpPositions.= " " .$position['name'];
-        }
-
-        $allPositions = explode(" ",$tmpPositions);
-
         $tmpHeads = "";
         foreach ($allHeads as $head){
             $tmpHeads.= "-".$head['fullname'] . "-";
@@ -56,7 +48,26 @@ class AddEmployeeComponent extends Component
         for ($i = 0; $i < count($tmpHeads)-1;$i+=2){
             $allHeads[] = $tmpHeads[$i]  . $tmpHeads[$i+1];
         }
-        //$allHeads = explode(" ",$tmpHeads);
+
+        return $allHeads;
+    }
+
+    public function getParsedPositions(){
+        $allPositions = Position::all("name");
+        $tmpPositions = "";
+        foreach ($allPositions as $position){
+            $tmpPositions.= " " .$position['name'];
+        }
+
+        $allPositions = explode(" ",$tmpPositions);
+
+        return $allPositions;
+    }
+
+    public function updated($field,$value){
+
+        $allHeads = $this->getParsedHeads();
+        $allPositions = $this->getParsedPositions();
 
         $this->validateOnly($field,[
             "fullname"=>"required|min:$this->minLength|max:$this->maxLength",
@@ -65,7 +76,13 @@ class AddEmployeeComponent extends Component
             "email"=>"required|email",
             "salary"=>"required|numeric|between:0,500000",
             "position"=>["required", Rule::in($allPositions)],
-            "head"=>["required",Rule::in($allHeads)],
+            "head"=>["required",function ($attribute, $value, $fail) use ($allHeads) {
+
+                if (!in_array($value, $allHeads) || EmployeeController::getHeadHierarchyLevel(Employee::where("fullname",$this->head)->first()->id) > 5){
+                    $fail('Head must be correct and head cannot be more than 5 level of hierarchy');
+                }
+
+            }],
             "dateOfEmployment"=>"required|date"
         ]);
 
@@ -74,26 +91,12 @@ class AddEmployeeComponent extends Component
 
     }
 
-    public function addEmployee(\Illuminate\Http\Request $request){
 
-        $allHeads = Employee::all("fullname");
-        $allPositions = Position::all("name");
-        $tmpPositions = "";
-        foreach ($allPositions as $position){
-            $tmpPositions.= " " .$position['name'];
-        }
+    public function addEmployee(){
 
-        $allPositions = explode(" ",$tmpPositions);
+        $allHeads = $this->getParsedHeads();
+        $allPositions = $this->getParsedPositions();
 
-        $tmpHeads = "";
-        foreach ($allHeads as $head){
-            $tmpHeads.= "-".$head['fullname'] . "-";
-        }
-        $tmpHeads = explode("-",$tmpHeads);
-        $allHeads = [];
-        for ($i = 0; $i < count($tmpHeads)-1;$i+=2){
-            $allHeads[] = $tmpHeads[$i]  . $tmpHeads[$i+1];
-        }
 
         $this->validate([
             "fullname"=>"required|min:$this->minLength|max:$this->maxLength",
@@ -102,7 +105,15 @@ class AddEmployeeComponent extends Component
             "email"=>"required|email",
             "salary"=>"required|numeric|between:0,500000",
             "position"=>["required", Rule::in($allPositions)],
-            "head"=>["required",Rule::in($allHeads)],
+            "head"=>["required",function ($attribute, $value, $fail) use ($allHeads) {
+                // your logic
+
+                // if fails you can throw and error message
+                if (!in_array($value, $allHeads) || EmployeeController::getHeadHierarchyLevel(Employee::where("fullname",$this->head)->first()->id) > 5){
+                    $fail('Head must be correct and head cannot be more than 5 level of hierarchy');
+                }
+
+            }],
             "dateOfEmployment"=>"required|date"
 
         ]);

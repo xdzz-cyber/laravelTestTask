@@ -3,6 +3,7 @@
 namespace App\Http\Livewire;
 
 use App\Models\Position;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
@@ -43,8 +44,8 @@ class EditPositionComponent extends Component
 
         $position = Position::find($this->positionId);
         $position->name = $this->positionName;
-        $position->admin_created_id = Auth::user()->id;
         $position->admin_updated_id = Auth::user()->id;
+        $position->updated_at = Carbon::now();
         $position->save();
 
         return redirect()->route("positions");

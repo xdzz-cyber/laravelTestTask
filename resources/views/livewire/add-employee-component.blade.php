@@ -7,6 +7,7 @@
             @error("photo")
             <p class="text-danger">{{$message}}</p>
             @enderror
+            <div id="photo2" class="form-text">File foramt jpg,png, the minimum size is 300x300</div>
         </div>
         <div class="mb-3">
             <label for="fullname" class="form-label">Employee fullname</label>
@@ -22,6 +23,7 @@
             @error("phone")
             <p class="text-danger">{{$message}}</p>
             @enderror
+            <div id="phone2" class="form-text">Required format +380(xx) XXX-XX-XX</div>
         </div>
         <div class="mb-3">
             <label for="email" class="form-label">Email</label>

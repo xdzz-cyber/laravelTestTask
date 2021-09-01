@@ -1,6 +1,6 @@
 <div class="border p-5">
     <h2>Edit employee</h2>
-    <form class="p-5" enctype="multipart/form-data">
+    <form class="p-5" enctype="multipart/form-data" wire:submit.prevent="editEmployee">
         <div class="mb-3">
             <div class="mb-3">
                 <label for="photo" class="form-label">Photo</label>
@@ -15,6 +15,7 @@
             <div class="mb-3">
                 <input type="file" wire:model="photo" name="photo">
             </div>
+            <div id="photo2" class="form-text">File foramt jpg,png, the minimum size is 300x300</div>
             @error("photo")
             <p class="text-danger">{{$message}}</p>
             @enderror
@@ -65,11 +66,11 @@
 
 
 
-                <div wire:loading>Searching....</div>
+                <div wire:loading wire:target="head">Searching....</div>
                 <div class="position-absolute list-group bg-white w-100 shadow-lg" style="z-index: 10">
                         @if($searchedEmployeeHead && $head)
                             @foreach($searchedEmployeeHead as $i => $item)
-                                <a wire:click.prevent="selectHeadAndSetIt" class="list-group-item {{$highlightIndex == $i ? 'text-bold' : ''}}" href="#">{{$item['fullname']}}</a>
+                                <a class="list-group-item {{$highlightIndex == $i ? 'text-bold' : ''}}" href="#">{{$item['fullname']}}</a>
                             @endforeach
                 </div>
                 @endif
@@ -85,9 +86,32 @@
             <p class="text-danger">{{$message}}</p>
             @enderror
         </div>
+
+        <div class="row my-4">
+            <div class="col-md-6">
+                <h5>Created at</h5>
+                <p class="text-black-50">{{\Carbon\Carbon::parse($created_at)->format("d-m-Y")}}</p>
+            </div>
+            <div class="col-md-6">
+                <h5>Admin created id</h5>
+                <p class="text-black-50">{{$admin_created_id}}</p>
+            </div>
+        </div>
+        <div class="row my-2">
+            <div class="col-md-6">
+                <h5>Updated at</h5>
+                <p class="text-black-50">{{\Carbon\Carbon::parse($updated_at)->format("d-m-Y")}}</p>
+            </div>
+            <div class="col-md-6">
+                <h5>Admin updated id</h5>
+                <p class="text-black-50">{{$admin_updated_id}}</p>
+            </div>
+        </div>
+
         <div class="mt-5">
             <a href="{{route('positions')}}" class="btn btn-danger mx-1">Cancel</a>
-            <button type="button" class="btn btn-primary mx-1" wire:click.prevent="editEmployee">Edit</button>
+            <button type="submit" class="btn btn-primary mx-1" >Edit</button>
+{{--            wire:click.prevent="editEmployee"--}}
         </div>
 
     </form>
